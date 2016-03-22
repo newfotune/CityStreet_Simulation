@@ -1,0 +1,235 @@
+/*
+ * Nwoke Fortune Chiemeziem Assagnment3 - easyStreet
+ */
+
+package model;
+
+import java.util.Map;
+
+/**
+ * This is my AbstractVehicle class. It keeps track of all shared qualities of the vehicle.
+ * 
+ * @author Nwoke Fortune Chiemeziem n4tunec@uw.edu
+ * @version winter 2015
+ *
+ */
+public abstract class AbstractVehicle implements Vehicle {
+
+    /** This is the default death time of all vehicles. */
+    private static final int DEFAULT_DEATH_TIME = 10;
+
+    /** This is my vehicle death time. */
+    protected int myDeadTime;
+
+    /** This is the direction of my vehicle. */
+    private Direction myDirection;
+
+    /** This is the x co-ordinate of my vehicle. */
+    private int myX;
+
+    /** This is the. */
+    private int myY;
+
+    /** This is my vehicle death time. */
+    private final Direction myOriginalDirection;
+
+    /** This is my vehicle death time. */
+    private final int myOriginalX;
+
+    /** This is my vehicle death time. */
+    private final int myOriginalY;
+
+    /** This is my vehicle death time. */
+    private boolean myVehicleIsAlive = true;
+
+    /** This is my vehicle death time. */
+    private int myDeadWaitingTime;
+
+    /**
+     * This is my constructor. It initializes my instance fields.
+     * 
+     * @param theX This is the x location of my vehicle.
+     * @param theY This is the Y location of my vehicle.
+     * @param theDirection This is the direction that my vehicle is headed.
+     */
+    public AbstractVehicle(final int theX, final int theY, final Direction theDirection) {
+        myOriginalDirection = theDirection;
+        myOriginalX = theX;
+        myOriginalY = theY;
+        myX = myOriginalX;
+        myY = myOriginalY;
+        myDirection = myOriginalDirection;
+        myDeadTime = DEFAULT_DEATH_TIME;
+        myDeadWaitingTime = 0;
+    }
+
+    /**
+     * This is my abstract canPass method. It determines if a vehicle can pass the specified
+     * terrain and light.
+     * 
+     * @param theTerrain This is the terrain of the vehicle.
+     * @param theLight This is the current light of the terrain of the vehicle.
+     * @return true if the object can pass, and false otherwise.
+     */
+    public abstract boolean canPass(final Terrain theTerrain, final Light theLight);
+
+    /**
+     * This method chooses the direction the vehicle should head in.
+     * 
+     * @param theNeighbors A map containing the different directions and their terrain.
+     * @return the direction to be headed in.
+     */
+    @Override
+    public abstract Direction chooseDirection(final Map<Direction, Terrain> theNeighbors);
+
+    /**
+     * This method checks when to vehicles collide. They have to both be alive to take an
+     * effect.
+     * 
+     * @param theOther this is the other vehicle involved in the collision.
+     */
+    @Override
+    public final void collide(final Vehicle theOther) {
+        if (isAlive() && theOther.isAlive()) {
+            if (getDeathTime() > theOther.getDeathTime()) {
+                myVehicleIsAlive = false;
+                myDeadWaitingTime = 0;
+
+                getImageFileName();
+            }
+        }
+    }
+
+    /**
+     * This method returns the death time of the vehicles.
+     * 
+     * @return the deathe time of the vehicle.
+     */
+    @Override
+    public int getDeathTime() {
+        // TODO Auto-generated method stub
+        return myDeadTime;
+    }
+
+    /**
+     * This method return the image of the vehicle.
+     * 
+     * @return the name of the image file.
+     * 
+     */
+    @Override
+    public final String getImageFileName() {
+
+        String image;
+
+        if (isAlive()) {
+            image = toString() + ".gif";
+        } else {
+            image = toString() + "_dead.gif";
+        }
+        return image;
+    }
+
+    // public abstract String getImageFileName();
+
+    /**
+     * This method returns the direction of the vehicle.
+     * 
+     * @return The Direction of the vehicle.
+     */
+    @Override
+    public final Direction getDirection() {
+        return myDirection;
+    }
+
+    /**
+     * This method return the x direction of the vehicle.
+     * 
+     * @return the x direction of the vehicle.
+     */
+    @Override
+    public final int getX() {
+        return myX;
+    }
+
+    /**
+     * This method return the Y direction of the vehicle.
+     * 
+     * @return the Y direction of the vehicle.
+     */
+    @Override
+    public final int getY() {
+        return myY;
+    }
+
+    /**
+     * This method returns the life state of the object. It tells us weather the vehicle is
+     * alive or dead.
+     * 
+     * @return true if vehicle is alive and false otherwise.
+     */
+    @Override
+    public final boolean isAlive() {
+        // TODO Auto-generated method stub
+        return myVehicleIsAlive;
+    }
+
+    /**
+     * This method pokes each vehicle after each update, to keep track of each death time.
+     */
+    @Override
+    public final void poke() {
+        // if vehicle is dead.
+        if (!isAlive()) {
+            myDeadWaitingTime++;
+            // if dead time is up, bring it back to life
+            if (myDeadWaitingTime >= getDeathTime()) {
+                myVehicleIsAlive = true;
+                setDirection(Direction.random());
+            }
+        }
+    }
+
+    /**
+     * This method resets the program when the reset button is clicked.
+     */
+    @Override
+    public final void reset() {
+        myX = myOriginalX;
+        myY = myOriginalY;
+        myDirection = myOriginalDirection;
+        myDeadWaitingTime = 0;
+        myVehicleIsAlive = true;
+
+    }
+
+    /**
+     * This method changes the direction of the vehicle.
+     * 
+     * @param theDir This is the new direction.
+     */
+    @Override
+    public final void setDirection(final Direction theDir) {
+        myDirection = theDir;
+    }
+
+    /**
+     * This method changes the x value of the vehicle.
+     * 
+     * @param theX This is the new x value.
+     */
+    @Override
+    public final  void setX(final int theX) {
+        myX = theX;
+    }
+
+    /**
+     * This method changes the y value of the vehicle.
+     * 
+     * @param theY This is the new Y value.
+     */
+    @Override
+    public final void setY(final int theY) {
+        myY = theY;
+    }
+}

@@ -1,0 +1,72 @@
+package model;
+
+import java.util.Map;
+
+public class Human extends AbstractVehicle {
+  
+    private Terrain myTerrain;
+    
+    private final int HUMAN_ADDIDIONAL_DEAD_TIME = 40;
+    
+    public Human(int theX, int theY, Direction theDirection, Terrain theTerrain) {
+        super(theX, theY, theDirection);
+        
+        myTerrain = theTerrain;
+    }
+
+
+    @Override
+    public String getImageFileName() {
+        
+        String humanImage;
+
+        if (isAlive()) {
+
+            humanImage = "human.gif";
+        }
+
+        else {
+            humanImage = "human_dead.gif";
+        }
+        return humanImage;
+    }
+
+
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+        Direction direction = Direction.random();
+        
+        Terrain humanTerrain = theNeighbors.get(direction);
+        
+        if (myTerrain!= humanTerrain) {
+            if (theNeighbors.get(direction.left()) == myTerrain) {
+                direction = direction.left();
+            }
+            
+            else if (theNeighbors.get(direction.right()) == myTerrain) {
+                direction = direction.right();
+            }
+            
+            else {
+                direction = direction.reverse();
+            }
+        }
+        
+        return direction;
+    }
+
+    @Override
+    public int getDeathTime() {
+        return super.getDeathTime() + HUMAN_ADDIDIONAL_DEAD_TIME;
+    }
+    
+    
+    @Override
+    public boolean canPass(Terrain theTerrain, Light theLight) {
+       return true;
+    }
+    
+    public String toString() {
+        return "Human " + isAlive();
+    }
+}

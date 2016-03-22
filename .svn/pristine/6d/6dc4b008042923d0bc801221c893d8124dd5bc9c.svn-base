@@ -1,0 +1,75 @@
+
+package model;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+public class Truck extends AbstractVehicle {
+
+    public Truck(int theX, int theY, Direction theDir) {
+        super(theX, theY, theDir);
+    }
+
+    @Override
+    public String getImageFileName() {
+
+        return "truck.gif";
+    }
+
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+
+        final Random rand = new Random();
+        Direction direction = getDirection();
+        // Direction the_new_direction = the_direction;
+        final Direction[] allDirectionArray = {direction, direction.left(),
+                                                direction.right()};
+        
+        final List<Direction> validDirections = new ArrayList<Direction>();
+
+        // Create the possible direction array for the truck
+        for (int i = 0; i < allDirectionArray.length; i++)
+        {
+            final Terrain terrain = theNeighbors.get(allDirectionArray[i]);
+
+            if (terrain == Terrain.STREET || terrain == Terrain.LIGHT)
+            {// add valid directions to the arraylist
+                validDirections.add(allDirectionArray[i]);
+            }
+        }
+        //if no valid direction, reverse.
+        if (validDirections.isEmpty())
+        {
+            direction = direction.reverse();
+        }
+        else //if valid directions, pick one at random
+        {
+            direction = validDirections.get(rand.nextInt(validDirections.size()));
+        }
+        
+        return direction;
+    }
+
+    @Override
+    public boolean canPass(Terrain theTerrain, Light theLight) {
+        boolean truckCanPass = true;
+
+        if (theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS
+            || theTerrain == Terrain.TRAIL) {
+            truckCanPass = false;
+        }
+        return truckCanPass;
+    }
+    
+    @Override
+    public int getDeathTime() {
+        return 0;
+    }
+    
+    
+    public String toString() {
+        return "Truck";
+    }
+}

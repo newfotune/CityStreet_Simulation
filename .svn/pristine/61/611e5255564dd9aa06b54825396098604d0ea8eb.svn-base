@@ -1,0 +1,101 @@
+
+package model;
+
+import java.util.Map;
+
+public class Bicycle extends AbstractVehicle {
+
+    private final String ALIVE_IMAGE = "bicycle.gif";
+    private final String DEAD_IMAGE = "bicycle_dead.gif";
+    private final int BICYCLE_ADDIDTINAL_DEAD_TIME = 10;
+
+    public Bicycle(int theX, int theY, Direction theDir) {
+
+        super(theX, theY, theDir);
+
+    }
+
+    @Override
+    public String getImageFileName() {
+        final String image;
+        if (isAlive()) {
+            image = ALIVE_IMAGE;
+        } else
+            image = DEAD_IMAGE;
+        return image;
+    }
+
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+
+        Direction direction = getDirection();
+        
+        if (theNeighbors.get(direction) == Terrain.TRAIL) {
+            direction = getDirection();
+        }
+        
+        else {
+            if (theNeighbors.get(direction.left()) == Terrain.TRAIL) {
+                direction = direction.left();
+            }
+            
+            else if (theNeighbors.get(direction.right()) == Terrain.TRAIL) {
+                direction = direction.right();
+            }
+            
+            else if (theNeighbors.get(direction) ==  Terrain.STREET 
+                                            || theNeighbors.get(direction) == Terrain.LIGHT) {
+                direction = getDirection();
+            }
+            
+            else if (theNeighbors.get(direction.left()) ==  Terrain.STREET 
+                                            || theNeighbors.get(direction.left()) == Terrain.LIGHT) {
+                direction = direction.left();
+            }
+            
+            else if (theNeighbors.get(direction.right()) ==  Terrain.STREET 
+                                            || theNeighbors.get(direction.right()) == Terrain.LIGHT) {
+                direction = direction.right();
+            }
+            
+            else {
+                direction = direction.reverse();
+            }
+            
+        } 
+        return direction;
+
+    }
+
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight) {
+        boolean bicycleCanPass = true;
+
+        if (theTerrain == Terrain.LIGHT) {
+
+            if (theLight == Light.YELLOW || theLight == Light.RED
+                || theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS) {
+                bicycleCanPass = false;
+            }
+        }
+
+        else {
+            if (theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS) {
+
+                bicycleCanPass = false;
+            }
+        }
+
+        return bicycleCanPass;
+    }
+
+    @Override
+    public int getDeathTime() {
+        return super.getDeathTime() + BICYCLE_ADDIDTINAL_DEAD_TIME;
+    }
+
+    public String toString() {
+        return "Bicycle " + isAlive();
+    }
+
+}

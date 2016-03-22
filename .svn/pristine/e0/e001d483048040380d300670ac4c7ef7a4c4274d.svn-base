@@ -1,0 +1,157 @@
+/*
+ * Nwoke Fortune Chiemeziem
+ * Assagnment3 - easyStreet
+ */
+package model;
+
+import java.util.Map;
+
+/**
+ * @author Nwoke Fortune Chiemeziem n4tunec@uw.edu
+ * @version winter 2015
+ *
+ */
+public abstract class AbstractVehicle implements Vehicle {
+
+    /**This is the default death time of all vehicles.*/
+    private static final int DEFAULT_DEATH_TIME = 10;
+    
+    /**This is my vehicle death time.*/
+    protected int myDeadTime;
+    
+    /**This is the direction of my vehicle.*/
+    private Direction myDirection;
+    
+    /**This is the x co-ordinate of my vehicle. */
+    private int myX;
+    
+    /**This is the.  */
+    private int myY;
+
+    /**This is my vehicle death time.*/
+    private final Direction myOriginalDirection;
+
+    /**This is my vehicle death time.*/
+    private final int myOriginalX;
+
+    /**This is my vehicle death time.*/
+    private final int myOriginalY;
+
+    /**This is my vehicle death time.*/
+    private boolean myVehicleIsAlive = true;
+    
+    /**This is my vehicle death time.*/
+    private int myDeadWaitingTime;
+
+    /**
+     * This is my constructor. It initializes my instance fields.
+     * @param theX This is the x location of my vehicle.
+     * @param theY This is the Y location of my vehicle.
+     * @param theDirection This is the direction that my vehicle is headed.
+     */
+    public AbstractVehicle(final int theX, final int theY, final Direction theDirection) {
+        myOriginalDirection = theDirection;
+        myOriginalX = theX;
+        myOriginalY = theY;
+        myX = myOriginalX;
+        myY = myOriginalY;
+        myDirection = myOriginalDirection;
+        myDeadTime = DEFAULT_DEATH_TIME;
+        myDeadWaitingTime = 0;
+    }
+
+    /**
+     * This is my abstract canPass method. It determines if a vehicle can pass the specified 
+     * terrain and light.
+     * @param theTerrain This is the terrain of the vehicle.
+     * @param theLight This is the current light of the terrain of the vehicle.
+     * @return true if the object can pass, and false otherwise.
+     */
+    public abstract boolean canPass(final Terrain theTerrain, final Light theLight);
+
+    /**
+     * 
+     */
+    @Override
+    public abstract Direction chooseDirection(final Map<Direction, Terrain> theNeighbors);
+
+    @Override
+    public void collide(final Vehicle theOther) {
+        if (isAlive() && theOther.isAlive()) {
+            if (getDeathTime() > theOther.getDeathTime()) {
+                myVehicleIsAlive = false;
+                myDeadWaitingTime = 0;
+             
+                getImageFileName();
+            }
+        }
+    }
+
+    @Override
+    public int getDeathTime() {
+        // TODO Auto-generated method stub
+        return myDeadTime;
+    }
+
+    @Override
+    public abstract String getImageFileName();
+
+    @Override
+    public Direction getDirection() {
+        return myDirection;
+    }
+
+    @Override
+    public int getX() {
+        return myX;
+    }
+
+    @Override
+    public int getY() {
+        return myY;
+    }
+
+    @Override
+    public boolean isAlive() {
+        // TODO Auto-generated method stub
+        return myVehicleIsAlive;
+    }
+
+    @Override
+    public void poke() {
+        // if vehicle is dead.
+        if (!isAlive()) {
+            myDeadWaitingTime++;
+            //if dead time is up, bring it back to life
+            if (myDeadWaitingTime >= getDeathTime()) {
+                myVehicleIsAlive = true;
+                setDirection(Direction.random());
+            }
+        }
+    }
+
+    @Override
+    public void reset() {
+        myX = myOriginalX;
+        myY = myOriginalY;
+        myDirection = myOriginalDirection;
+        myDeadWaitingTime = 0;
+        myVehicleIsAlive = true;
+
+    }
+
+    @Override
+    public void setDirection(final Direction theDir) {
+        myDirection = theDir;
+    }
+
+    @Override
+    public void setX(final int theX) {
+        myX = theX;
+    }
+
+    @Override
+    public void setY(final int theY) {
+        myY = theY;
+    }
+}

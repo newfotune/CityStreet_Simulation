@@ -1,0 +1,22 @@
+package model;
+
+import static org.junit.Assert.assertSame;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class mainClass {
+
+    public static void main(String[] args) {
+        final Map<Direction, Terrain> neighbors = new HashMap<Direction, Terrain>();
+        neighbors.put(Direction.WEST, Terrain.WALL);
+        neighbors.put(Direction.NORTH, Terrain.WALL);
+        neighbors.put(Direction.EAST, Terrain.WALL);
+        
+        Truck m = new Truck(10, 10, Direction.WEST);
+        System.out.println(m.canPass(Terrain.WALL, Light.GREEN));
+        
+      
+    }
+
+}

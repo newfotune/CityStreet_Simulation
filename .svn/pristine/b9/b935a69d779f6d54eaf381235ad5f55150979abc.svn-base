@@ -1,0 +1,104 @@
+/*
+ * Nwoke Fortune Chiemeziem
+ *  Assagnment3 - easyStreet
+ */
+package model;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+/**
+ * This is the truck class. It represents the truck in the GUI.
+ * 
+ * @author Nwoke Fortune Chiemeziem (n4tunec@uw.edu)
+ * @version winter 2015.
+ *
+ */
+public final class Truck extends AbstractVehicle {
+
+    /**
+     * This is the constructor. It initialized my fields.
+     * 
+     * @param theX This is the X location of the truck.
+     * @param theY This is the Y location of the truck.
+     * @param theDir This is the direction of the truck.
+     */
+    public Truck(final int theX, final int theY, final Direction theDir) {
+        super(theX, theY, theDir);
+    }
+    
+    /**
+     * This method chooses the direction for the truck.
+     * 
+     * @param theNeighbors This is the map containing the directions and their terrain.
+     * @return the chosen direction.
+     */
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+
+        final Random rand = new Random();
+        Direction direction = getDirection();
+        // Direction the_new_direction = the_direction;
+        final Direction[] allDirectionArray = {direction, direction.left(),
+                                                direction.right()};
+        
+        final List<Direction> validDirections = new ArrayList<Direction>();
+
+        // Create the possible direction array for the truck
+        for (int i = 0; i < allDirectionArray.length; i++) {
+        
+            final Terrain terrain = theNeighbors.get(allDirectionArray[i]);
+
+            if (terrain == Terrain.STREET || terrain == Terrain.LIGHT) {
+            // add valid directions to the arraylist.
+                validDirections.add(allDirectionArray[i]);
+            }
+        }
+        //if no valid direction, reverse.
+        if (validDirections.isEmpty()) {
+            direction = direction.reverse();
+        } else { //if valid directions, pick one at random
+        
+            direction = validDirections.get(rand.nextInt(validDirections.size()));
+        }
+        
+        return direction;
+    }
+    
+    /**
+     * This method checks if the truck can pass the specified terrain and light.
+     * 
+     * @param theTerrain The terrain to be checked.
+     * @param theLight The light to be checked.
+     * @return true of the truck can pass, else false.
+     */
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight) {
+        boolean truckCanPass = true;
+
+        if (theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS
+            || theTerrain == Terrain.TRAIL) {
+            truckCanPass = false;
+        }
+        return truckCanPass;
+    }
+    
+    /**
+     * This method returns the death time of the truck.
+     * @return the death time of the truck.
+     */
+    @Override
+    public int getDeathTime() {
+        return 0;
+    }
+    
+    /**
+     * This methods returns a string representation the truck.
+     * @return the name of the vehicle.
+     */
+    public String toString() {
+        return "truck";
+    }
+}

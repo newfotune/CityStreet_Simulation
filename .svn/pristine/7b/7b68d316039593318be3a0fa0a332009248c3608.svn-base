@@ -1,0 +1,88 @@
+
+package model;
+
+import java.util.Map;
+
+public class Car extends AbstractVehicle {
+
+    public Car(int theX, int theY, Direction theDir) {
+        super(theX, theY, theDir);
+    }
+
+    @Override
+    public String getImageFileName() {
+
+        String carImage;
+
+        if (isAlive()) {
+            carImage = "car.gif";
+        }
+
+        else {
+            carImage = "car_dead.gif";
+        }
+        return carImage;
+    }
+
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+
+        Direction direction = getDirection();
+
+        if (theNeighbors.get(direction) == Terrain.STREET 
+                                        || theNeighbors.get(direction) == Terrain.LIGHT) {
+            
+            direction = getDirection();
+        }
+
+        else if (theNeighbors.get(direction.left()) == Terrain.STREET
+                 && passable(theNeighbors.get(direction.left()))) {
+            direction = getDirection().left();
+        }
+
+        else if (theNeighbors.get(direction.right()) == Terrain.STREET
+                 && passable(theNeighbors.get(direction.right()))) {
+            direction = getDirection().right();
+        } else {
+            direction = direction.reverse();
+        }
+
+        return direction;
+    }
+
+    // if it can pass this terrain, return true.
+    private boolean passable(Terrain theTerrain) {
+
+        boolean isPassable = false;
+
+        if (theTerrain == Terrain.STREET) {
+            isPassable = true;
+        }
+        return isPassable;
+    }
+
+    @Override
+    public boolean canPass(Terrain theTerrain, Light theLight) {
+        boolean isPassable = true;
+        
+        if (theTerrain == Terrain.LIGHT)
+            if (theLight == Light.RED) {
+            isPassable = false;
+        }
+        else {
+            if (theTerrain == Terrain.WALL || theTerrain == Terrain.GRASS ||
+                                            theTerrain == Terrain.TRAIL)
+                isPassable = false;
+        }
+        return isPassable;
+    }
+    
+    @Override
+    public int getDeathTime() {
+        return super.getDeathTime();
+    }
+    
+    public String toString() {
+        return "car " + isAlive();
+    }
+}
